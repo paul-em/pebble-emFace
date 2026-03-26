@@ -1,6 +1,6 @@
 {
   "name": "pebble-android-watchface",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Android Clock inspired watchface for Pebble with time, date and weather",
   "author": "Paul Em",
   "license": "MIT",

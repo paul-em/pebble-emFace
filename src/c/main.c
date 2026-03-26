@@ -1,5 +1,9 @@
 #include <pebble.h>
 
+#define PERSIST_KEY_TEMPERATURE 0
+#define PERSIST_KEY_WEATHER_CODE 1
+#define PERSIST_KEY_WEATHER_TIME 2
+
 static Window *s_window;
 static TextLayer *s_hour_layer;
 static TextLayer *s_minute_layer;
@@ -138,17 +142,40 @@ static void weather_icon_draw(Layer *layer, GContext *ctx) {
 // AppMessage – receive weather data from phone JS
 // ---------------------------------------------------------------------------
 
+static void apply_weather(int temp, int code) {
+  s_weather_code = code;
+  snprintf(s_temp_buf, sizeof(s_temp_buf), "%d\u00B0", temp);
+  text_layer_set_text(s_temp_layer, s_temp_buf);
+  if (s_weather_icon_layer) layer_mark_dirty(s_weather_icon_layer);
+}
+
+static void load_cached_weather(void) {
+  if (!persist_exists(PERSIST_KEY_WEATHER_TIME)) return;
+
+  int cached_time = persist_read_int(PERSIST_KEY_WEATHER_TIME);
+  int now = (int)time(NULL);
+
+  // Only use cache if less than 1 hour old
+  if (now - cached_time > 3600) return;
+
+  int temp = persist_read_int(PERSIST_KEY_TEMPERATURE);
+  int code = persist_read_int(PERSIST_KEY_WEATHER_CODE);
+  apply_weather(temp, code);
+}
+
 static void inbox_received_handler(DictionaryIterator *iter, void *context) {
   Tuple *temp_tuple = dict_find(iter, MESSAGE_KEY_Temperature);
   Tuple *code_tuple = dict_find(iter, MESSAGE_KEY_WeatherCode);
 
   if (temp_tuple && code_tuple) {
     int temp = temp_tuple->value->int32;
-    s_weather_code = code_tuple->value->int32;
+    int code = code_tuple->value->int32;
 
-    snprintf(s_temp_buf, sizeof(s_temp_buf), "%d\u00B0", temp);
-    text_layer_set_text(s_temp_layer, s_temp_buf);
-    if (s_weather_icon_layer) layer_mark_dirty(s_weather_icon_layer);
+    persist_write_int(PERSIST_KEY_TEMPERATURE, temp);
+    persist_write_int(PERSIST_KEY_WEATHER_CODE, code);
+    persist_write_int(PERSIST_KEY_WEATHER_TIME, (int)time(NULL));
+
+    apply_weather(temp, code);
   }
 }
 
@@ -237,6 +264,7 @@ static void window_load(Window *window) {
   layer_add_child(root, text_layer_get_layer(s_temp_layer));
 
   update_time();
+  load_cached_weather();
 }
 
 static void window_unload(Window *window) {
