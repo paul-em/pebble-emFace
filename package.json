@@ -1,11 +1,11 @@
 {
-  "name": "pebble-android-watchface",
+  "name": "pebble-android-pixel",
   "version": "1.1.0",
   "description": "Android Clock inspired watchface for Pebble with time, date and weather",
   "author": "Paul Em",
   "license": "MIT",
   "pebble": {
-    "displayName": "Android Clock",
+    "displayName": "Android Pixel",
     "uuid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
     "sdkVersion": "3",
     "enableMultiJS": true,
