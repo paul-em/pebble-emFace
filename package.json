@@ -1,6 +1,6 @@
 {
   "name": "pebble-emFace",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "emFace watchface with monospace time, weather range, and phone link status",
   "author": "Paul Em",
   "license": "MIT",
@@ -40,6 +40,6 @@
   },
   "scripts": {
     "build": "pebble build",
-    "install": "pebble install --phone 192.168.1.144"
+    "preview": "pebble install --phone 192.168.1.144"
   }
 }

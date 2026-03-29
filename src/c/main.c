@@ -289,10 +289,10 @@ static void canvas_draw(Layer *layer, GContext *ctx) {
   int rx = w - mx - cw;
 
   draw_corner_tl(ctx, lx, my, cw);
-  draw_corner_tr(ctx, rx, my, cw);
+  draw_corner_tr(ctx, rx, 0, cw);
 
   int by = h - my - 22;
-  draw_corner_bl(ctx, lx, by, cw);
+  draw_corner_bl(ctx, lx, h - 22, cw);
   draw_corner_br(ctx, rx, by, cw);
 
   draw_time(ctx, w / 2, h / 2);
